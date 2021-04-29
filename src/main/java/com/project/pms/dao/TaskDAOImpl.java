@@ -15,6 +15,7 @@ public class TaskDAOImpl implements DAO<Task>{
     private final static String SQL_GET_TASKS_BY_ID = "SELECT * FROM task WHERE id = ?";
     private final static String SQL_INSERT_TASKS = "INSERT INTO task (name, time, start, end, status) VALUES (?, ?, ?, ?, ?)";
     private final static String SQL_DELETE_TASKS_BY_ID = "DELETE FROM task WHERE id = ?";
+    private final static String SQL_GET_TASKS_BY_PROJECT_ID = "SELECT * FROM task JOIN project_task pt ON task.id = pt.task_id WHERE pt.project_id = ?";
 
     private final DBConnector CONNECTOR;
     private Connection connection;
@@ -40,7 +41,8 @@ public class TaskDAOImpl implements DAO<Task>{
                         resultSet.getInt("time"),
                         resultSet.getDate("start"),
                         resultSet.getDate("end"),
-                        Status.valueOf(resultSet.getString("status")));
+                        Status.valueOf(resultSet.getString("status"))
+                );
                 tasks.add(task);
             }
         } catch (SQLException e) {
@@ -80,6 +82,34 @@ public class TaskDAOImpl implements DAO<Task>{
             CONNECTOR.closeConnection();
         }
         return task;
+    }
+
+    public List<Task> getByProjectId(Long id) {
+        List<Task> tasks = new ArrayList<>();
+        try {
+            connection = CONNECTOR.getConnection();
+            preparedStatement = connection.prepareStatement(SQL_GET_TASKS_BY_PROJECT_ID);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet =
+                    preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Task task = new Task(
+                        resultSet.getLong("id"),
+                        resultSet.getString("name"),
+                        resultSet.getInt("time"),
+                        resultSet.getDate("start"),
+                        resultSet.getDate("end"),
+                        Status.valueOf(resultSet.getString("status"))
+                );
+                tasks.add(task);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            CONNECTOR.closeStatement(statement);
+            CONNECTOR.closeConnection();
+        }
+        return tasks;
     }
 
     @Override

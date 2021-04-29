@@ -1,7 +1,7 @@
 INSERT INTO project (name, short, description) VALUES
 ('Logistic Project', 'LP', 'The logistics project about supporting chains of supplies'),
 ('Enterprise Resources Planning System', 'ERPS', 'The idea to create ERP to automate manufacture processes'),
-('Calculator', 'Calc', 'Calculator that supports multiplication, addition, subtraction adn division'),
+('Calculator', 'Calc', 'Calculator that supports multiplication, addition, subtraction and division'),
 ('Customer Relationship Management System', 'CRMS', 'CRM of new age that provides new functionality to increase customers flow at company');
 
 INSERT INTO task(name, time, start, "end", status) VALUES
