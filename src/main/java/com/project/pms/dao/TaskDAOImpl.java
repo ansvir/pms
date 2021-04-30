@@ -1,6 +1,7 @@
 package com.project.pms.dao;
 
 import com.project.pms.connector.DBConnector;
+import com.project.pms.model.Project;
 import com.project.pms.model.Status;
 import com.project.pms.model.Task;
 
@@ -14,7 +15,11 @@ public class TaskDAOImpl implements DAO<Task>{
     private final static String SQL_GET_ALL_TASKS = "SELECT * FROM task";
     private final static String SQL_GET_TASKS_BY_ID = "SELECT * FROM task WHERE id = ?";
     private final static String SQL_INSERT_TASKS = "INSERT INTO task (name, time, start, end, status) VALUES (?, ?, ?, ?, ?)";
+    private final static String SQL_UPDATE_TASK = "UPDATE task SET name = ?, time = ?, start = ?, end = ?, status = ? WHERE id =?";
+    private final static String SQL_INSERT_TASK_INTO_PROJECT_TASK = "INSERT INTO project_task (project_id, task_id) VALUES (?, ?)";
+    private final static String SQL_UPDATE_TASK_IN_PROJECT_TASK = "UPDATE project_task SET project_id = ? WHERE task_id = ?";
     private final static String SQL_DELETE_TASKS_BY_ID = "DELETE FROM task WHERE id = ?";
+    private final static String SQL_DELETE_TASKS_IDS_IN_PROJECT_TASK_BY_TASK_ID = "DELETE FROM project_task WHERE task_id = ?";
     private final static String SQL_GET_TASKS_BY_PROJECT_ID = "SELECT * FROM task JOIN project_task pt ON task.id = pt.task_id WHERE pt.project_id = ?";
 
     private final DBConnector CONNECTOR;
@@ -114,19 +119,15 @@ public class TaskDAOImpl implements DAO<Task>{
 
     @Override
     public boolean update(Task task) {
-        return false;
-    }
-
-    @Override
-    public boolean create(Task task) {
         try {
             connection = CONNECTOR.getConnection();
-            preparedStatement = connection.prepareStatement(SQL_INSERT_TASKS);
+            preparedStatement = connection.prepareStatement(SQL_UPDATE_TASK);
             preparedStatement.setString(1, task.getName());
             preparedStatement.setInt(2, task.getTime());
             preparedStatement.setDate(3, task.getStart());
             preparedStatement.setDate(4, task.getEnd());
-            preparedStatement.setString(5, task.getStatus().toString());
+            preparedStatement.setString(5, task.getStatus().getStatus());
+            preparedStatement.setLong(6, task.getId());
             int rowsAffected =
                     preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
@@ -142,12 +143,52 @@ public class TaskDAOImpl implements DAO<Task>{
     }
 
     @Override
+    public Long create(Task task) {
+        Long generatedId = null;
+        try {
+            connection = CONNECTOR.getConnection();
+            preparedStatement = connection.prepareStatement(SQL_INSERT_TASKS, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, task.getName());
+            preparedStatement.setInt(2, task.getTime());
+            preparedStatement.setDate(3, task.getStart());
+            preparedStatement.setDate(4, task.getEnd());
+            preparedStatement.setString(5, task.getStatus().toString());
+            int rowsAffected =
+                    preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                return generatedId;
+            }
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    generatedId = generatedKeys.getLong(1);
+                }
+                else {
+                    return generatedId;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            CONNECTOR.closeStatement(preparedStatement);
+            CONNECTOR.closeConnection();
+        }
+        return generatedId;
+    }
+
+    @Override
     public boolean delete(Task task) {
         try {
             connection = CONNECTOR.getConnection();
-            preparedStatement = connection.prepareStatement(SQL_DELETE_TASKS_BY_ID);
+            preparedStatement = connection.prepareStatement(SQL_DELETE_TASKS_IDS_IN_PROJECT_TASK_BY_TASK_ID);
             preparedStatement.setLong(1, task.getId());
             int rowsAffected =
+                    preparedStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                return true;
+            }
+            preparedStatement = connection.prepareStatement(SQL_DELETE_TASKS_BY_ID);
+            preparedStatement.setLong(1, task.getId());
+            rowsAffected =
                     preparedStatement.executeUpdate();
             if (rowsAffected > 0) {
                 return true;

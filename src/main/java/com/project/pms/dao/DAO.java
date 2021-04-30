@@ -9,6 +9,6 @@ public interface DAO<T> {
     Collection<T> getAll();
     T getById(Long id);
     boolean update(T t);
-    boolean create(T t);
+    Long create(T t);
     boolean delete(T t);
 }
