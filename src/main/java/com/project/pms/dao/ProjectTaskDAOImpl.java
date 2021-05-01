@@ -14,7 +14,7 @@ public class ProjectTaskDAOImpl implements DAO<ProjectTask>{
 
     private final static String SQL_GET_ALL_PROJECTS_TASKS = "SELECT * FROM project_task";
     private final static String SQL_GET_PROJECT_TASKS_BY_PROJECT_ID = "SELECT * FROM project_task WHERE project_id = ?";
-    private final static String SQL_GET_PROJECTS_TASK_BY_TASK_ID = "SELECT * FROM project_task WHERE task_id = ?";
+    private final static String SQL_GET_PROJECT_TASK_BY_TASK_ID = "SELECT * FROM project_task WHERE task_id = ?";
     private final static String SQL_UPDATE_PROJECT_TASK_BY_TASK_ID = "UPDATE project_task SET project_id = ? WHERE task_id = ?";
     private final static String SQL_INSERT_PROJECT_TASK = "INSERT INTO project_task VALUES (?, ?)";
     private final static String SQL_DELETE_PROJECT_TASK_BY_IDS = "DELETE FROM project_task WHERE project_id = ? AND task_id = ?";
@@ -85,21 +85,20 @@ public class ProjectTaskDAOImpl implements DAO<ProjectTask>{
         return projectTasks;
     }
 
-    public Collection<ProjectTask> getProjectsByTaskId(Long id) {
-        List<ProjectTask> projectTasks = new ArrayList<>();
+    public ProjectTask getProjectByTaskId(Long id) {
+        ProjectTask projectTask = null;
         try {
             connection = CONNECTOR.getConnection();
-            preparedStatement = connection.prepareStatement(SQL_GET_PROJECTS_TASK_BY_TASK_ID);
+            preparedStatement = connection.prepareStatement(SQL_GET_PROJECT_TASK_BY_TASK_ID);
             preparedStatement.setLong(1, id);
             ResultSet resultSet =
                     preparedStatement.executeQuery();
             if (resultSet != null) {
                 while (resultSet.next()) {
-                    ProjectTask projectTask = new ProjectTask(
+                    projectTask = new ProjectTask(
                             resultSet.getLong("project_id"),
                             resultSet.getLong("task_id")
                     );
-                    projectTasks.add(projectTask);
                 }
             }
         } catch (SQLException e) {
@@ -108,7 +107,7 @@ public class ProjectTaskDAOImpl implements DAO<ProjectTask>{
             CONNECTOR.closeStatement(preparedStatement);
             CONNECTOR.closeConnection();
         }
-        return projectTasks;
+        return projectTask;
     }
 
     @Override
@@ -142,10 +141,10 @@ public class ProjectTaskDAOImpl implements DAO<ProjectTask>{
             preparedStatement.setLong(2, projectTask.getTaskId());
             int rowsAffected =
                     preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
+            if (rowsAffected == 0) {
                 return generatedId;
             }
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     generatedId = generatedKeys.getLong(1);
                 }

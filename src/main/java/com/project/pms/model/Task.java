@@ -4,12 +4,12 @@ import java.sql.Date;
 import java.util.Objects;
 
 public class Task {
-    Long id;
-    String name;
-    Integer time;
-    Date start;
-    Date end;
-    Status status;
+    private Long id;
+    private String name;
+    private Integer time;
+    private Date start;
+    private Date end;
+    private Status status;
 
     public Task() {
     }

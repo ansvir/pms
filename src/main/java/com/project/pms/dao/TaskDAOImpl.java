@@ -1,7 +1,6 @@
 package com.project.pms.dao;
 
 import com.project.pms.connector.DBConnector;
-import com.project.pms.model.Project;
 import com.project.pms.model.Status;
 import com.project.pms.model.Task;
 
@@ -14,8 +13,8 @@ public class TaskDAOImpl implements DAO<Task>{
 
     private final static String SQL_GET_ALL_TASKS = "SELECT * FROM task";
     private final static String SQL_GET_TASKS_BY_ID = "SELECT * FROM task WHERE id = ?";
-    private final static String SQL_INSERT_TASKS = "INSERT INTO task (name, time, start, end, status) VALUES (?, ?, ?, ?, ?)";
-    private final static String SQL_UPDATE_TASK = "UPDATE task SET name = ?, time = ?, start = ?, end = ?, status = ? WHERE id =?";
+    private final static String SQL_INSERT_TASKS = "INSERT INTO task (name, time, start, \"end\", status) VALUES (?, ?, ?, ?, ?)";
+    private final static String SQL_UPDATE_TASK = "UPDATE task SET name = ?, time = ?, start = ?, \"end\" = ?, status = ? WHERE id =?";
     private final static String SQL_INSERT_TASK_INTO_PROJECT_TASK = "INSERT INTO project_task (project_id, task_id) VALUES (?, ?)";
     private final static String SQL_UPDATE_TASK_IN_PROJECT_TASK = "UPDATE project_task SET project_id = ? WHERE task_id = ?";
     private final static String SQL_DELETE_TASKS_BY_ID = "DELETE FROM task WHERE id = ?";
@@ -104,7 +103,7 @@ public class TaskDAOImpl implements DAO<Task>{
                         resultSet.getInt("time"),
                         resultSet.getDate("start"),
                         resultSet.getDate("end"),
-                        Status.valueOf(resultSet.getString("status"))
+                        Status.getByStatusName(resultSet.getString("status"))
                 );
                 tasks.add(task);
             }
@@ -126,7 +125,7 @@ public class TaskDAOImpl implements DAO<Task>{
             preparedStatement.setInt(2, task.getTime());
             preparedStatement.setDate(3, task.getStart());
             preparedStatement.setDate(4, task.getEnd());
-            preparedStatement.setString(5, task.getStatus().getStatus());
+            preparedStatement.setString(5, task.getStatus().toString());
             preparedStatement.setLong(6, task.getId());
             int rowsAffected =
                     preparedStatement.executeUpdate();
@@ -155,10 +154,10 @@ public class TaskDAOImpl implements DAO<Task>{
             preparedStatement.setString(5, task.getStatus().toString());
             int rowsAffected =
                     preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
+            if (rowsAffected == 0) {
                 return generatedId;
             }
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     generatedId = generatedKeys.getLong(1);
                 }

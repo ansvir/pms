@@ -22,7 +22,6 @@ public class UpdateProjectCommand implements ICommand{
         String shortName = request.getParameter("projectShortName");
         String description = request.getParameter("projectDescription");
         taskDAO = new TaskDAOImpl();
-        List<Task> tasks = taskDAO.getByProjectId(id);
         Project project = new Project();
         project.setId(id);
         project.setName(name);

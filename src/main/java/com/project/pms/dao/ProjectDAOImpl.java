@@ -147,10 +147,10 @@ public class ProjectDAOImpl implements DAO<Project> {
             preparedStatement.setString(3, project.getDescription());
             int rowsAffected =
                     preparedStatement.executeUpdate();
-            if (rowsAffected > 0) {
+            if (rowsAffected == 0) {
                 return null;
             }
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     generatedId = generatedKeys.getLong(1);
                 }

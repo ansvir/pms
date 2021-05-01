@@ -29,4 +29,11 @@ public enum Status {
         }
         return null;
     }
+
+    public static Status getByStatusName(String name) {
+        for(Status s : values()) {
+            if(s.getStatus().equals(name)) return s;
+        }
+        return null;
+    }
 }

@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Menu</title>
@@ -53,18 +52,6 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach items="${sessionScope.projects}" var="project">
-                                <tr id="p-${project.id}">
-                                    <td>
-                                        <input id="pcb-${project.id}" name="projectsCB" class="custom-checkbox"
-                                               type="checkbox" value="${project.id}"/>
-                                    </td>
-                                    <td>${project.id}</td>
-                                    <td>${project.name}</td>
-                                    <td>${project.shortName}</td>
-                                    <td>${project.description}</td>
-                                </tr>
-                            </c:forEach>
                             </tbody>
                         </table>
                     </div>
@@ -98,28 +85,6 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach items="${sessionScope.tasks}" var="task">
-                                <tr id="t-${task.id}">
-                                    <td>
-                                        <input id="tcb-${task.id}" name="tasksCB" class="custom-checkbox"
-                                               type="checkbox" value="${task.id}"/>
-                                    </td>
-                                    <td>${task.id}</td>
-                                    <td>
-                                        <c:forEach items="${sessionScope.projects}" var="project">
-                                            <c:forEach items="${project.tasks}" var="task2">
-                                                <c:if test="${task2.id eq task.id}">
-                                                    ${project.shortName}
-                                                </c:if>
-                                            </c:forEach>
-                                        </c:forEach>
-                                    </td>
-                                    <td>${task.name}</td>
-                                    <td>${task.start}</td>
-                                    <td>${task.end}</td>
-                                    <td>${task.status.status}</td>
-                                </tr>
-                            </c:forEach>
                             </tbody>
                         </table>
                     </div>
@@ -148,7 +113,7 @@
                     <label for="modalProjectId">ID</label>
                     <div class="input-group mb-3">
                         <input id="modalProjectId" name="projectId" type="text" class="form-control" aria-label="ID"
-                               aria-describedby="modalProjectId" disabled>
+                               aria-describedby="modalProjectId" readonly>
                     </div>
                     <label for="modalProjectName">Name</label>
                     <div class="input-group mb-3">
@@ -190,14 +155,11 @@
                     <label for="modalTaskId">ID</label>
                     <div class="input-group mb-3">
                         <input id="modalTaskId" name="taskId" type="text" class="form-control" aria-label="ID"
-                               aria-describedby="modalTaskId" disabled>
+                               aria-describedby="modalTaskId" readonly>
                     </div>
                     <div class="form-group">
                         <label for="modalTaskProject">Project</label>
                         <select name="taskProject" class="form-control" id="modalTaskProject">
-                            <c:forEach items="${sessionScope.projects}" var="project">
-                                <option value="mtp-${project.id}">${project.shortName}</option>
-                            </c:forEach>
                         </select>
                     </div>
                     <label for="modalTaskName">Name</label>
@@ -228,9 +190,6 @@
                     <div class="form-group">
                         <label for="modalTaskStatus">Status</label>
                         <select name="taskStatus" class="form-control" id="modalTaskStatus">
-                            <c:forEach items="${sessionScope.statuses}" var="status">
-                                <option value="mts-${status.id}">${status.status}</option>
-                            </c:forEach>
                         </select>
                     </div>
                 </div>

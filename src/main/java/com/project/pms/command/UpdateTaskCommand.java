@@ -3,7 +3,6 @@ package com.project.pms.command;
 import com.project.pms.dao.ProjectDAOImpl;
 import com.project.pms.dao.ProjectTaskDAOImpl;
 import com.project.pms.dao.TaskDAOImpl;
-import com.project.pms.model.Project;
 import com.project.pms.model.ProjectTask;
 import com.project.pms.model.Status;
 import com.project.pms.model.Task;
@@ -25,7 +24,7 @@ public class UpdateTaskCommand implements ICommand{
         Integer time = Integer.parseInt(request.getParameter("taskTime"));
         Date start = Date.valueOf(request.getParameter("taskStart"));
         Date end = Date.valueOf(request.getParameter("taskEnd"));
-        Status status = Status.valueOf(request.getParameter("taskStatus").replace(" ", "_"));
+        Status status = Status.getById(Long.parseLong(request.getParameter("taskStatus").substring(4)));
         Long projectId = Long.parseLong(request.getParameter("taskProject").substring(4));
         Task task = new Task();
         task.setId(id);
@@ -38,6 +37,7 @@ public class UpdateTaskCommand implements ICommand{
         taskDAO.update(task);
         projectDAO = new ProjectDAOImpl();
         ProjectTask projectTask = new ProjectTask(projectId, id);
+        projectTaskDAO = new ProjectTaskDAOImpl();
         projectTaskDAO.update(projectTask);
         return "/jsp/menu.jsp";
     }

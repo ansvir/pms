@@ -1,6 +1,9 @@
-$(document).ready(function() {
+$(document).ready(function () {
     let currentSelectedProjectId;
     let currentSelectedTaskId;
+    let projects;
+    let tasks;
+    const body = $('body');
     const warningMessage = $('#warningMessage');
     warningMessage.hide();
     const projectModal = $('#projectModal');
@@ -9,12 +12,89 @@ $(document).ready(function() {
     taskModal.modal({show: false});
     const action = $('#action');
     action.val(createProject);
+    let statuses = [];
 
-    $('#projectsTable').on('click', function(e) {
+    $.ajax({
+        url: contextPath + '/status/all',
+        async: true,
+        success: function (responseText) {
+            statuses = JSON.parse(responseText);
+            console.log(statuses);
+            statuses.forEach(status => {
+                $('#modalTaskStatus').append(
+                    `
+            <option value="mts-${status.id}">${status.name}</option>
+            `
+                )
+            });
+        }
+    });
+
+    $.ajax({
+        url: contextPath + '/project/all',
+        async: true,
+        success: function (responseText) {
+            projects = JSON.parse(responseText);
+            projects.forEach(project => {
+                $('#modalTaskProject').append(
+                    `
+            <option value="mtp-${project.id}">${project.shortName}</option>
+            `
+                )
+            });
+            const projectsTableTBody = $('#projectsTable tbody');
+            projects.forEach(project => {
+                projectsTableTBody.append(
+                    `
+                    <tr id="p-${project.id}">
+                        <td>
+                            <input id="pcb-${project.id}" name="projectsCB" class="custom-checkbox"
+                                   type="checkbox" value="${project.id}"/>
+                        </td>
+                        <td>${project.id}</td>
+                        <td>${project.name}</td>
+                        <td>${project.shortName}</td>
+                        <td>${project.description}</td>
+                    </tr>
+                      `
+                );
+            });
+
+            $.ajax({
+                url: contextPath + '/task/all',
+                success: function (responseText) {
+                    tasks = JSON.parse(responseText);
+                    console.log(tasks);
+                    const tasksTableTBody = $('#tasksTable tbody');
+                    tasks.forEach(task => {
+                        tasksTableTBody.append(
+                            `
+                                <tr id="t-${task.id}">
+                                    <td>
+                                        <input id="tcb-${task.id}" name="tasksCB" class="custom-checkbox"
+                                               type="checkbox" value="${task.id}"/>
+                                    </td>
+                                    <td>${task.id}</td>
+                                    <td>${getProjectShortNameById(task.projectId)}</td>
+                                    <td>${task.name}</td>
+                                    <td>${task.start}</td>
+                                    <td>${task.end}</td>
+                                    <td>${getStatusNameByStatusId(task.status)}</td>
+                                </tr>
+            `
+                        );
+                    });
+                }
+            });
+        }
+    });
+
+    body.on('click', '#projectsTable', function (e) {
         const tr = $(e.target).closest('tr')
         let trId = tr.attr('id');
         let id = trId.substring(2);
-        const cb = $(`#pcb-${id}`);
+        const cb = $(`
+        #pcb-${id}`);
         if (cb.is(':checked')) {
             cb.prop('checked', false);
             tr.removeClass('tr-select-bg');
@@ -26,11 +106,12 @@ $(document).ready(function() {
         }
     });
 
-    $('#tasksTable').on('click', function(e){
+    body.on('click', '#tasksTable', function (e) {
         const tr = $(e.target).closest('tr')
         let trId = tr.attr('id');
         let id = trId.substring(2);
-        const cb = $(`#tcb-${id}`);
+        const cb = $(`
+        #tcb-${id}`);
         if (cb.is(':checked')) {
             cb.prop('checked', false);
             tr.removeClass('tr-select-bg');
@@ -42,17 +123,17 @@ $(document).ready(function() {
         }
     });
 
-    $('#createProject').on('click', function() {
+    body.on('click', '#createProject',function () {
         action.val(createProject);
         $('#projectModalTitle').text("New Project");
         projectModal.modal('show');
     });
 
-    $('#changeProject').on('click', function() {
+    body.on('click', '#changeProject', function () {
         if (currentSelectedProjectId === undefined) {
             warningMessage.text("Choose a project, please!");
             warningMessage.show();
-            setTimeout(function(){
+            setTimeout(function () {
                 $('#warningMessage').hide()
             }, 4000)
             return;
@@ -69,25 +150,26 @@ $(document).ready(function() {
                 $('#modalProjectName').val(response.name);
                 $('#modalProjectShort').val(response.shortName);
                 $('#modalProjectDescription').val(response.description);
-                $('#projectModalTitle').text(`Project ${response.shortName}`);
+                $('#projectModalTitle').text(`
+                Project ${response.shortName}`);
             }
         });
         projectModal.modal('show');
     });
 
-    $('#addTask').on('click', function() {
+    body.on('click', '#addTask', function () {
         action.val(createTask);
         $('#taskModalTitle').text("New Task");
         taskModal.modal('show');
     });
 
-    $('#changeTask').on('click', function() {
+    body.on('click', '#changeTask', function () {
         if (currentSelectedTaskId === undefined) {
-            warningMessage.text("Change a task, please!");
+            warningMessage.text("Choose a task, please!");
             warningMessage.show();
-            setTimeout(function(){
+            setTimeout(function () {
                 $('#warningMessage').hide()
-            }, 4000)
+            }, 4000);
             return;
         }
         action.val(updateTask);
@@ -98,14 +180,19 @@ $(document).ready(function() {
             },
             success: function (responseText) {
                 let response = JSON.parse(responseText);
-                $('#modalTaskId').val(response[0].id);
-                $('#modalTaskProject').val(`mtp-${response[1].id}`);
-                $('#modalTaskName').val(response[0].name);
-                $('#modalTaskTime').val(response[0].time);
-                $('#modalTaskStart').val(response[3]);
-                $('#modalTaskEnd').val(response[4]);
-                $('#modalTaskStatus').val(`mts-${response[2]}`);
-                $('#taskModalTitle').text(`Task ${response[0].name}`);
+                console.log(response);
+                console.log($('#modalTaskStatus').val());
+                $('#modalTaskId').val(response.id);
+                $('#modalTaskProject').val(`mtp-${response.projectId}`);
+                $('#modalTaskName').val(response.name);
+                $('#modalTaskTime').val(response.time);
+                $('#modalTaskStart').val(response.start);
+                $('#modalTaskEnd').val(response.end);
+                $('#modalTaskStatus').val(`mts-${response.status}`);
+                console.log(response.status);
+                console.log(getStatusNameByStatusId(response.status));
+                $('#taskModalTitle').text(`
+                Task ${response.name}`);
             }
         });
         taskModal.modal('show');
@@ -120,19 +207,38 @@ $(document).ready(function() {
 
     taskModal.on('hidden.bs.modal', function () {
         $('#modalTaskId').val('');
-        $('#modalTaskProject').val(`mtp-1`);
+        $('#modalTaskProject').val(`
+                mtp-1`);
         $('#modalTaskName').val('');
         $('#modalTaskTime').val('');
         $('#modalTaskStart').val('');
         $('#modalTaskEnd').val('');
-        $('#modalTaskStatus').val(`mts-1`);
+        $('#modalTaskStatus').val(`
+                mts-1`);
     });
 
-    $('#deleteProject').on('click', function() {
+    body.on('click', '#deleteProject', function () {
         action.val(deleteProject);
     });
 
-    $('#deleteTask').on('click', function() {
+    body.on('click', '#deleteTask',function () {
         action.val(deleteTask);
-    })
+    });
+
+    function getProjectShortNameById(id) {
+        let projectShortName = "";
+        projects.forEach(project => {
+            if (project.id === id) {
+                projectShortName = project.shortName;
+            }
+        });
+
+        return projectShortName;
+    }
+
+    function getStatusNameByStatusId(id) {
+        return statuses.find(status => {
+            return status.id === id;
+        }).name;
+    }
 });

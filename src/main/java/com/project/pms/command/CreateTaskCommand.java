@@ -3,7 +3,6 @@ package com.project.pms.command;
 import com.project.pms.dao.ProjectDAOImpl;
 import com.project.pms.dao.ProjectTaskDAOImpl;
 import com.project.pms.dao.TaskDAOImpl;
-import com.project.pms.model.Project;
 import com.project.pms.model.ProjectTask;
 import com.project.pms.model.Status;
 import com.project.pms.model.Task;
