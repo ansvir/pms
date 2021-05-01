@@ -1,21 +1,33 @@
 package com.project.pms.command;
 
-import com.project.pms.dao.ProjectDAOImpl;
-import com.project.pms.dao.ProjectTaskDAOImpl;
-import com.project.pms.dao.TaskDAOImpl;
+import com.project.pms.dao.*;
 import com.project.pms.model.Project;
 import com.project.pms.model.ProjectTask;
 import com.project.pms.model.Task;
+import com.project.pms.qualifiers.DeleteProjectCommandQualifier;
+import com.project.pms.qualifiers.ProjectDAOImplQualifier;
+import com.project.pms.qualifiers.ProjectTaskDAOImplQualifier;
+import com.project.pms.qualifiers.TaskDAOImplQualifier;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.util.List;
 
+@DeleteProjectCommandQualifier
+@Transactional
 public class DeleteProjectCommand implements ICommand {
 
-    private ProjectTaskDAOImpl projectTaskDAO;
-    private ProjectDAOImpl projectDAO;
-    private TaskDAOImpl taskDAO;
+    @Inject
+    @ProjectTaskDAOImplQualifier
+    private ProjectTaskDAO projectTaskDAO;
+    @Inject
+    @ProjectDAOImplQualifier
+    private ProjectDAO projectDAO;
+    @Inject
+    @TaskDAOImplQualifier
+    private TaskDAO taskDAO;
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {

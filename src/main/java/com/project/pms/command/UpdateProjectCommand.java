@@ -1,19 +1,24 @@
 package com.project.pms.command;
 
+import com.project.pms.dao.ProjectDAO;
 import com.project.pms.dao.ProjectDAOImpl;
 import com.project.pms.dao.TaskDAOImpl;
 import com.project.pms.model.Project;
-import com.project.pms.model.Task;
+import com.project.pms.qualifiers.ProjectDAOImplQualifier;
+import com.project.pms.qualifiers.UpdateProjectCommandQualifier;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
+import javax.transaction.Transactional;
 
+@UpdateProjectCommandQualifier
+@Transactional
 public class UpdateProjectCommand implements ICommand{
 
-    private ProjectDAOImpl projectDAO;
-    private TaskDAOImpl taskDAO;
+    @Inject
+    @ProjectDAOImplQualifier
+    private ProjectDAO projectDAO;
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -21,13 +26,11 @@ public class UpdateProjectCommand implements ICommand{
         String name = request.getParameter("projectName");
         String shortName = request.getParameter("projectShortName");
         String description = request.getParameter("projectDescription");
-        taskDAO = new TaskDAOImpl();
         Project project = new Project();
         project.setId(id);
         project.setName(name);
         project.setShortName(shortName);
         project.setDescription(description);
-        projectDAO = new ProjectDAOImpl();
         if (projectDAO.update(project)) {
             request.setAttribute("successMessage", "Project updated successfully!");
         } else {

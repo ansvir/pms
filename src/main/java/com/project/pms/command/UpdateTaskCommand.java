@@ -1,21 +1,30 @@
 package com.project.pms.command;
 
-import com.project.pms.dao.ProjectDAOImpl;
-import com.project.pms.dao.ProjectTaskDAOImpl;
-import com.project.pms.dao.TaskDAOImpl;
+import com.project.pms.dao.*;
 import com.project.pms.model.ProjectTask;
 import com.project.pms.model.Status;
 import com.project.pms.model.Task;
+import com.project.pms.qualifiers.ProjectDAOImplQualifier;
+import com.project.pms.qualifiers.ProjectTaskDAOImplQualifier;
+import com.project.pms.qualifiers.TaskDAOImplQualifier;
+import com.project.pms.qualifiers.UpdateTaskCommandQualifier;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.sql.Date;
 
+@UpdateTaskCommandQualifier
+@Transactional
 public class UpdateTaskCommand implements ICommand{
 
-    private TaskDAOImpl taskDAO;
-    private ProjectTaskDAOImpl projectTaskDAO;
-    private ProjectDAOImpl projectDAO;
+    @Inject
+    @TaskDAOImplQualifier
+    private TaskDAO taskDAO;
+    @Inject
+    @ProjectTaskDAOImplQualifier
+    private ProjectTaskDAO projectTaskDAO;
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -33,11 +42,8 @@ public class UpdateTaskCommand implements ICommand{
         task.setStart(start);
         task.setEnd(end);
         task.setStatus(status);
-        taskDAO = new TaskDAOImpl();
         taskDAO.update(task);
-        projectDAO = new ProjectDAOImpl();
         ProjectTask projectTask = new ProjectTask(projectId, id);
-        projectTaskDAO = new ProjectTaskDAOImpl();
         projectTaskDAO.update(projectTask);
         return "/jsp/menu.jsp";
     }

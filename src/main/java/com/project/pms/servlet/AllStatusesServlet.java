@@ -1,11 +1,10 @@
 package com.project.pms.servlet;
 
-import com.project.pms.dao.ProjectDAOImpl;
-import com.project.pms.model.Project;
 import com.project.pms.model.Status;
 import com.project.pms.response.StatusResponse;
 import com.project.pms.util.JsonProcessor;
 
+import javax.enterprise.context.RequestScoped;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

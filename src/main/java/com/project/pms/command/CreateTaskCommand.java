@@ -1,21 +1,29 @@
 package com.project.pms.command;
 
-import com.project.pms.dao.ProjectDAOImpl;
-import com.project.pms.dao.ProjectTaskDAOImpl;
-import com.project.pms.dao.TaskDAOImpl;
+import com.project.pms.dao.*;
 import com.project.pms.model.ProjectTask;
 import com.project.pms.model.Status;
 import com.project.pms.model.Task;
+import com.project.pms.qualifiers.CreateTaskCommandQualifier;
+import com.project.pms.qualifiers.ProjectTaskDAOImplQualifier;
+import com.project.pms.qualifiers.TaskDAOImplQualifier;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.sql.Date;
 
+@CreateTaskCommandQualifier
+@Transactional
 public class CreateTaskCommand implements ICommand{
 
-    private ProjectDAOImpl projectDAO;
-    private ProjectTaskDAOImpl projectTaskDAO;
-    private TaskDAOImpl taskDAO;
+    @Inject
+    @ProjectTaskDAOImplQualifier
+    private ProjectTaskDAO projectTaskDAO;
+    @Inject
+    @TaskDAOImplQualifier
+    private TaskDAO taskDAO;
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -30,12 +38,9 @@ public class CreateTaskCommand implements ICommand{
         task.setStart(start);
         task.setEnd(end);
         task.setStatus(status);
-        taskDAO = new TaskDAOImpl();
         Long taskId = taskDAO.create(task);
         Long projectId = Long.parseLong(request.getParameter("taskProject").substring(4));
-        projectDAO = new ProjectDAOImpl();
         ProjectTask projectTask = new ProjectTask(projectId, taskId);
-        projectTaskDAO = new ProjectTaskDAOImpl();
         projectTaskDAO.create(projectTask);
         return "/jsp/menu.jsp";
     }

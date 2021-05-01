@@ -3,13 +3,20 @@ package com.project.pms.dao;
 import com.project.pms.connector.DBConnector;
 import com.project.pms.model.Status;
 import com.project.pms.model.Task;
+import com.project.pms.qualifiers.TaskDAOImplQualifier;
 
+import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class TaskDAOImpl implements DAO<Task>{
+@Stateless
+@TaskDAOImplQualifier
+@Transactional
+public class TaskDAOImpl implements TaskDAO {
 
     private final static String SQL_GET_ALL_TASKS = "SELECT * FROM task";
     private final static String SQL_GET_TASKS_BY_ID = "SELECT * FROM task WHERE id = ?";

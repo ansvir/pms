@@ -1,9 +1,9 @@
 package com.project.pms.dao;
 
-import com.project.pms.model.Project;
+import com.project.pms.model.ProjectTask;
+import com.project.pms.response.TaskResponse;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface DAO<T> {
     Collection<T> getAll();

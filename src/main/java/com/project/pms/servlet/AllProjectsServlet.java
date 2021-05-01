@@ -1,9 +1,14 @@
 package com.project.pms.servlet;
 
+import com.project.pms.dao.DAO;
+import com.project.pms.dao.ProjectDAO;
 import com.project.pms.dao.ProjectDAOImpl;
 import com.project.pms.model.Project;
+import com.project.pms.qualifiers.ProjectDAOImplQualifier;
 import com.project.pms.util.JsonProcessor;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +19,10 @@ import java.util.List;
 @WebServlet("/project/all")
 public class AllProjectsServlet extends HttpServlet {
 
-    private ProjectDAOImpl projectDAO;
+    @Inject
+    @ProjectDAOImplQualifier
+    private ProjectDAO projectDAO;
 
-    @Override
-    public void init() {
-        projectDAO = new ProjectDAOImpl();
-    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Project> projects = (List<Project>) projectDAO.getAll();

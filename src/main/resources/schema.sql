@@ -1,6 +1,3 @@
-DROP TABLE IF EXISTS project_task;
-DROP TABLE IF EXISTS project;
-DROP TABLE IF EXISTS task;
 CREATE TABLE IF NOT EXISTS project
 (
     id          SERIAL PRIMARY KEY,

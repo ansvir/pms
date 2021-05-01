@@ -4,13 +4,20 @@ import com.project.pms.connector.DBConnector;
 import com.project.pms.model.Project;
 import com.project.pms.model.ProjectTask;
 import com.project.pms.model.Task;
+import com.project.pms.qualifiers.ProjectTaskDAOImplQualifier;
 
+import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ProjectTaskDAOImpl implements DAO<ProjectTask>{
+@Stateless
+@ProjectTaskDAOImplQualifier
+@Transactional
+public class ProjectTaskDAOImpl implements ProjectTaskDAO {
 
     private final static String SQL_GET_ALL_PROJECTS_TASKS = "SELECT * FROM project_task";
     private final static String SQL_GET_PROJECT_TASKS_BY_PROJECT_ID = "SELECT * FROM project_task WHERE project_id = ?";
