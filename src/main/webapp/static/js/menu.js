@@ -15,10 +15,10 @@ $(document).ready(function () {
     let statuses = [];
 
     $.ajax({
-        url: contextPath + '/status/all',
+        url: contextPath + '/api/status/all',
         async: true,
         success: function (responseText) {
-            statuses = JSON.parse(responseText);
+            statuses = responseText;
             console.log(statuses);
             statuses.forEach(status => {
                 $('#modalTaskStatus').append(
@@ -31,10 +31,10 @@ $(document).ready(function () {
     });
 
     $.ajax({
-        url: contextPath + '/project/all',
+        url: contextPath + '/api/project/all',
         async: true,
         success: function (responseText) {
-            projects = JSON.parse(responseText);
+            projects = responseText;
             projects.forEach(project => {
                 $('#modalTaskProject').append(
                     `
@@ -61,9 +61,9 @@ $(document).ready(function () {
             });
 
             $.ajax({
-                url: contextPath + '/task/all',
+                url: contextPath + '/api/task/all',
                 success: function (responseText) {
-                    tasks = JSON.parse(responseText);
+                    tasks = responseText;
                     console.log(tasks);
                     const tasksTableTBody = $('#tasksTable tbody');
                     tasks.forEach(task => {
@@ -140,12 +140,9 @@ $(document).ready(function () {
         }
         action.val(updateProject);
         $.ajax({
-            url: contextPath + '/project/id',
-            data: {
-                projectId: currentSelectedProjectId
-            },
+            url: contextPath + `/api/project/${currentSelectedProjectId}`,
             success: function (responseText) {
-                let response = JSON.parse(responseText);
+                let response = responseText;
                 $('#modalProjectId').val(response.id);
                 $('#modalProjectName').val(response.name);
                 $('#modalProjectShort').val(response.shortName);
@@ -174,12 +171,9 @@ $(document).ready(function () {
         }
         action.val(updateTask);
         $.ajax({
-            url: contextPath + '/task/id',
-            data: {
-                taskId: currentSelectedTaskId
-            },
+            url: contextPath + `/api/task/${currentSelectedTaskId}`,
             success: function (responseText) {
-                let response = JSON.parse(responseText);
+                let response = responseText;
                 console.log(response);
                 console.log($('#modalTaskStatus').val());
                 $('#modalTaskId').val(response.id);
