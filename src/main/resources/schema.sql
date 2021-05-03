@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS project
+CREATE TABLE IF NOT EXISTS public.project
 (
     id          SERIAL PRIMARY KEY,
     name        VARCHAR,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS project
     description VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS task
+CREATE TABLE IF NOT EXISTS public.task
 (
     id     SERIAL PRIMARY KEY,
     name   VARCHAR,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS task
     status VARCHAR
 );
 
-CREATE TABLE IF NOT EXISTS project_task
+CREATE TABLE IF NOT EXISTS public.project_task
 (
     project_id INT REFERENCES project (id),
     task_id    INT REFERENCES task (id)

@@ -42,10 +42,11 @@ public class DatabasePopulator {
     // schema and data SQL files are stored under src/main/resources folder
     @PostConstruct
     private void initializeDatabase() {
-        if (initiateDatabaseDAO.createTables() == 0) {
-            return;
-        } else {
+        if (initiateDatabaseDAO.databaseContainsTables() != 3) {
+            initiateDatabaseDAO.createTables();
             LOGGER.info("Tables were created");
+        } else {
+            return;
         }
 
         Project project1 = new Project();
@@ -73,43 +74,44 @@ public class DatabasePopulator {
         Long project4Id = projectDAO.create(project4);
 
         try {
+            String dateFormat = "yyyy-MM-dd";
             Task task1 = new Task();
             task1.setName("Implement UI");
             task1.setTime(120);
-            task1.setStart((Date) new SimpleDateFormat().parse("2021-01-01"));
-            task1.setEnd((Date) new SimpleDateFormat().parse("2021-01-21"));
+            task1.setStart((new Date(new SimpleDateFormat(dateFormat).parse("2021-01-01").getTime())));
+            task1.setEnd((new Date(new SimpleDateFormat(dateFormat).parse("2021-01-21").getTime())));
             task1.setStatus(Status.PROCESS);
             Long task1Id = taskDAO.create(task1);
 
             Task task2 = new Task();
             task2.setName("Create addition and division operations");
             task2.setTime(160);
-            task2.setStart((Date) new SimpleDateFormat().parse("2021-01-01"));
-            task2.setEnd((Date) new SimpleDateFormat().parse("2021-02-1"));
+            task2.setStart((new Date(new SimpleDateFormat(dateFormat).parse("2021-01-01").getTime())));
+            task2.setEnd((new Date(new SimpleDateFormat(dateFormat).parse("2021-02-01").getTime())));
             task2.setStatus(Status.PROCESS);
             Long task2Id = taskDAO.create(task2);
 
             Task task3 = new Task();
             task3.setName("Migrate project to Maven");
             task3.setTime(120);
-            task3.setStart((Date) new SimpleDateFormat().parse("2020-12-01"));
-            task3.setEnd((Date) new SimpleDateFormat().parse("2021-12-21"));
+            task3.setStart((new Date(new SimpleDateFormat(dateFormat).parse("2020-12-01").getTime())));
+            task3.setEnd((new Date(new SimpleDateFormat(dateFormat).parse("2021-01-21").getTime())));
             task3.setStatus(Status.ACCOMPLISHED);
             Long task3Id = taskDAO.create(task3);
 
             Task task4 = new Task();
             task4.setName("Find out the requirements");
             task4.setTime(80);
-            task4.setStart((Date) new SimpleDateFormat().parse("2020-12-01"));
-            task4.setEnd((Date) new SimpleDateFormat().parse("2021-12-14"));
+            task4.setStart((new Date(new SimpleDateFormat(dateFormat).parse("2020-12-01").getTime())));
+            task4.setEnd((new Date(new SimpleDateFormat(dateFormat).parse("2021-01-14").getTime())));
             task4.setStatus(Status.ACCOMPLISHED);
             Long task4Id = taskDAO.create(task4);
 
             Task task5 = new Task();
             task5.setName("Implement business logic");
             task5.setTime(320);
-            task5.setStart((Date) new SimpleDateFormat().parse("2021-01-01"));
-            task5.setEnd((Date) new SimpleDateFormat().parse("2021-03-01"));
+            task5.setStart((new Date(new SimpleDateFormat(dateFormat).parse("2021-01-01").getTime())));
+            task5.setEnd((new Date(new SimpleDateFormat(dateFormat).parse("2021-03-01").getTime())));
             task5.setStatus(Status.DELAYED);
             Long task5Id = taskDAO.create(task5);
 
@@ -123,6 +125,7 @@ public class DatabasePopulator {
             projectTaskDAO.create(project1task5);
             projectTaskDAO.create(project3task1);
             projectTaskDAO.create(project3task2);
+            LOGGER.info("Tables were filled");
         } catch (ParseException e) {
             e.printStackTrace();
         }

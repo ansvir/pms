@@ -44,13 +44,12 @@ public class ProjectDAOImpl implements ProjectDAO {
             ResultSet resultSet =
                     statement.executeQuery(SQL_GET_ALL_PROJECTS);
             while (resultSet.next()) {
-                List<Task> tasks= new TaskDAOImpl().getByProjectId(resultSet.getLong("id"));
                 Project project = new Project(
                         resultSet.getLong("id"),
                         resultSet.getString("name"),
                         resultSet.getString("short"),
-                        resultSet.getString("description"),
-                        tasks);
+                        resultSet.getString("description")
+                );
                 projects.add(project);
             }
         } catch (SQLException e) {
@@ -73,13 +72,11 @@ public class ProjectDAOImpl implements ProjectDAO {
                     preparedStatement.executeQuery();
             if (resultSet != null) {
                 while (resultSet.next()) {
-                    List<Task> tasks = new TaskDAOImpl().getByProjectId(resultSet.getLong("id"));
                     project = new Project(
                             resultSet.getLong("id"),
                             resultSet.getString("name"),
                             resultSet.getString("short"),
-                            resultSet.getString("description"),
-                            tasks
+                            resultSet.getString("description")
                     );
                 }
             }
@@ -102,13 +99,11 @@ public class ProjectDAOImpl implements ProjectDAO {
                     preparedStatement.executeQuery();
             if (resultSet != null) {
                 while (resultSet.next()) {
-                    List<Task> tasks = new TaskDAOImpl().getByProjectId(resultSet.getLong("id"));
                     project = new Project(
                             resultSet.getLong("id"),
                             resultSet.getString("name"),
                             resultSet.getString("short"),
-                            resultSet.getString("description"),
-                            tasks
+                            resultSet.getString("description")
                     );
                 }
             }

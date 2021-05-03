@@ -19,28 +19,32 @@
 </head>
 <body>
 <jsp:include page="navbar.jsp"/>
-<form action="${pageContext.request.contextPath}/action" method="POST">
+<form id="form" action="${pageContext.request.contextPath}/action" method="POST">
     <input id="action" type="hidden" name="command"/>
-    <div class="container-fluid">
+    <div class="container-fluid mb-2">
         <div class="row mt-2">
             <div class="col-2">
                 <div id="warningMessage" class="alert alert-warning" role="alert">
                     Message here
                 </div>
             </div>
-            <div class="col-8 d-flex justify-content-center">
-                <h1 class="text-light">Menu</h1>
+            <div class="col-8">
             </div>
             <div class="col-2">
             </div>
         </div>
-        <hr class="bg-light">
         <div class="row mb-5">
             <div class="col-1"></div>
             <div class="col-10">
                 <div class="row">
+                    <div class="col-9"><h4 class="text-light mb-2">Projects</h4></div>
+                    <div class="input-group col-2 d-flex align-items-end">
+                        <input class="form-control py-1 mb-2" type="search" placeholder="Search..." id="projectSearch"/>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row">
                     <div class="col-11">
-                        <h4 class="text-light">Projects</h4>
                         <table id="projectsTable" class="table table-light">
                             <thead>
                             <tr>
@@ -70,8 +74,14 @@
             <div class="col-1"></div>
             <div class="col-10">
                 <div class="row">
+                    <div class="col-9"><h4 class="text-light mb-2">Tasks</h4></div>
+                    <div class="input-group col-2 d-flex align-items-end">
+                        <input class="form-control py-1 mb-2" type="search" placeholder="Search..." id="taskSearch"/>
+                    </div>
+                    <div class="col-1"></div>
+                </div>
+                <div class="row">
                     <div class="col-11">
-                        <h4 class="text-light">Tasks</h4>
                         <table id="tasksTable" class="table table-light">
                             <thead>
                             <tr>
@@ -99,6 +109,9 @@
             <div class="col-1"></div>
         </div>
     </div>
+</form>
+<form id="projectForm" action="${pageContext.request.contextPath}/action" method="POST">
+    <input id="actionProject" type="hidden" name="command"/>
     <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -117,7 +130,8 @@
                     </div>
                     <label for="modalProjectName">Name</label>
                     <div class="input-group mb-3">
-                        <input id="modalProjectName" name="projectName" type="text" class="form-control"
+                        <input id="modalProjectName" name="projectName" type="text" class="form-control" maxlength="30"
+                               required="required"
                                placeholder="Name"
                                aria-label="Name"
                                aria-describedby="modalProjectName">
@@ -125,12 +139,13 @@
                     <label for="modalProjectShort">Short name</label>
                     <div class="input-group mb-3">
                         <input id="modalProjectShort" name="projectShortName" type="text" class="form-control"
-                               placeholder="Short name"
+                               placeholder="Short name" maxlength="20" required="required"
                                aria-label="Short name" aria-describedby="modalProjectShort">
                     </div>
                     <label for="modalProjectDescription">Description</label>
                     <div class="input-group">
                         <textarea id="modalProjectDescription" name="projectDescription" class="form-control"
+                                  maxlength="200"
                                   aria-label="Description"></textarea>
                     </div>
                 </div>
@@ -141,6 +156,9 @@
             </div>
         </div>
     </div>
+</form>
+<form id="taskForm" action="${pageContext.request.contextPath}/action" method="POST">
+    <input id="actionTask" type="hidden" name="command"/>
     <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -165,24 +183,27 @@
                     <label for="modalTaskName">Name</label>
                     <div class="input-group mb-3">
                         <input id="modalTaskName" name="taskName" type="text" class="form-control" placeholder="Name"
-                               aria-label="Name"
+                               aria-label="Name" required="required"
+                               maxlength="30"
                                aria-describedby="modalTaskName">
                     </div>
                     <label for="modalTaskTime">Time (h)</label>
                     <div class="input-group mb-3">
                         <input id="modalTaskTime" name="taskTime" type="number" class="form-control" placeholder="Time"
-                               aria-label="Short name" aria-describedby="modalTaskTime">
+                               aria-label="Short name" aria-describedby="modalTaskTime" required="required"
+                               max="1056000">
                     </div>
                     <label for="modalTaskStart">Start date</label>
                     <div class="input-group date" data-provide="datepicker">
-                        <input id="modalTaskStart" name="taskStart" type="date" class="form-control">
+                        <input id="modalTaskStart" name="taskStart" type="date" required="required"
+                               class="form-control" max="9999-12-31">
                         <div class="input-group-addon">
                             <span class="glyphicon glyphicon-th"></span>
                         </div>
                     </div>
                     <label for="modalTaskEnd">End date</label>
                     <div class="input-group date" data-provide="datepicker">
-                        <input id="modalTaskEnd" name="taskEnd" type="date" class="form-control">
+                        <input id="modalTaskEnd" name="taskEnd" type="date" required="required" class="form-control" max="9999-12-31">
                         <div class="input-group-addon">
                             <span class="glyphicon glyphicon-th"></span>
                         </div>

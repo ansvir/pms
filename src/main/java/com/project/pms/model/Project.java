@@ -1,6 +1,5 @@
 package com.project.pms.model;
 
-import java.util.List;
 import java.util.Objects;
 
 public class Project {
@@ -8,17 +7,15 @@ public class Project {
     String name;
     String shortName;
     String description;
-    List<Task> tasks;
 
     public Project() {
     }
 
-    public Project(Long id, String name, String shortName, String description, List<Task> tasks) {
+    public Project(Long id, String name, String shortName, String description) {
         this.id = id;
         this.name = name;
         this.shortName = shortName;
         this.description = description;
-        this.tasks = tasks;
     }
 
     public Long getId() {
@@ -53,25 +50,17 @@ public class Project {
         this.description = description;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return Objects.equals(id, project.id) && Objects.equals(name, project.name) && Objects.equals(shortName, project.shortName) && Objects.equals(description, project.description) && Objects.equals(tasks, project.tasks);
+        return Objects.equals(id, project.id) && Objects.equals(name, project.name) && Objects.equals(shortName, project.shortName) && Objects.equals(description, project.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, shortName, description, tasks);
+        return Objects.hash(id, name, shortName, description);
     }
 
     @Override
@@ -81,7 +70,6 @@ public class Project {
                 ", name='" + name + '\'' +
                 ", shortName='" + shortName + '\'' +
                 ", description='" + description + '\'' +
-                ", tasks=" + tasks +
                 '}';
     }
 }

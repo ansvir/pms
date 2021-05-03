@@ -28,12 +28,10 @@ public class CreateProjectCommand implements ICommand{
         String name = request.getParameter("projectName");
         String shortName = request.getParameter("projectShortName");
         String description = request.getParameter("projectDescription");
-        List<Task> tasks = new ArrayList<>();
         Project project = new Project();
         project.setName(name);
         project.setShortName(shortName);
         project.setDescription(description);
-        project.setTasks(tasks);
         if (projectDAO.create(project) != null) {
             request.setAttribute("successMessage", "Project created successfully!");
         } else {

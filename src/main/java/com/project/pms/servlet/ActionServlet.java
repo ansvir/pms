@@ -4,7 +4,6 @@ import com.project.pms.command.ActionFactory;
 import com.project.pms.command.ICommand;
 import com.project.pms.qualifiers.EmptyCommandQualifier;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;

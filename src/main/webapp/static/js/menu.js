@@ -11,7 +11,9 @@ $(document).ready(function () {
     projectModal.modal({show: false});
     taskModal.modal({show: false});
     const action = $('#action');
-    action.val(createProject);
+    const actionProject = $('#actionProject');
+    const actionTask = $('#actionTask');
+
     let statuses = [];
 
     $.ajax({
@@ -92,6 +94,7 @@ $(document).ready(function () {
     body.on('click', '#projectsTable', function (e) {
         const tr = $(e.target).closest('tr')
         let trId = tr.attr('id');
+        if (!trId) return;
         let id = trId.substring(2);
         const cb = $(`
         #pcb-${id}`);
@@ -109,6 +112,7 @@ $(document).ready(function () {
     body.on('click', '#tasksTable', function (e) {
         const tr = $(e.target).closest('tr')
         let trId = tr.attr('id');
+        if (!trId) return;
         let id = trId.substring(2);
         const cb = $(`
         #tcb-${id}`);
@@ -124,7 +128,7 @@ $(document).ready(function () {
     });
 
     body.on('click', '#createProject',function () {
-        action.val(createProject);
+        actionProject.val(createProject);
         $('#projectModalTitle').text("New Project");
         projectModal.modal('show');
     });
@@ -138,7 +142,7 @@ $(document).ready(function () {
             }, 4000)
             return;
         }
-        action.val(updateProject);
+        actionProject.val(updateProject);
         $.ajax({
             url: contextPath + `/api/project/${currentSelectedProjectId}`,
             success: function (responseText) {
@@ -155,7 +159,7 @@ $(document).ready(function () {
     });
 
     body.on('click', '#addTask', function () {
-        action.val(createTask);
+        actionTask.val(createTask);
         $('#taskModalTitle').text("New Task");
         taskModal.modal('show');
     });
@@ -169,7 +173,7 @@ $(document).ready(function () {
             }, 4000);
             return;
         }
-        action.val(updateTask);
+        actionTask.val(updateTask);
         $.ajax({
             url: contextPath + `/api/task/${currentSelectedTaskId}`,
             success: function (responseText) {
@@ -212,10 +216,26 @@ $(document).ready(function () {
     });
 
     body.on('click', '#deleteProject', function () {
+        if (currentSelectedProjectId === undefined) {
+            warningMessage.text("Choose a project, please!");
+            warningMessage.show();
+            setTimeout(function () {
+                $('#warningMessage').hide()
+            }, 4000)
+            return;
+        }
         action.val(deleteProject);
     });
 
     body.on('click', '#deleteTask',function () {
+        if (currentSelectedTaskId === undefined) {
+            warningMessage.text("Choose a project, please!");
+            warningMessage.show();
+            setTimeout(function () {
+                $('#warningMessage').hide()
+            }, 4000)
+            return;
+        }
         action.val(deleteTask);
     });
 
@@ -235,4 +255,43 @@ $(document).ready(function () {
             return status.id === id;
         }).name;
     }
+
+    body.on('input', '#projectSearch', function() {
+        let filter, trs;
+        filter = $('#projectSearch').val().toUpperCase();
+        trs = $('#projectsTable').find('tr');
+        runSearch(trs, filter);
+    });
+
+    body.on('input', '#taskSearch', function() {
+        let filter, trs;
+        filter = $('#taskSearch').val().toUpperCase();
+        trs = $('#tasksTable').find('tr');
+        runSearch(trs, filter);
+    });
+
+    function runSearch(trs, filter) {
+        let tds, td, tdText;
+        for (let i = 0; i < trs.length; i++) {
+            tds = $(trs[i]).find('td');
+            for (let j = 0; j < tds.length; j++) {
+                td = $(tds[j]);
+                if (td) {
+                    tdText = $(td).text();
+                    if (tdText.toUpperCase().indexOf(filter) > -1) {
+                        $(trs[i]).show();
+                        break;
+                    } else {
+                        $(trs[i]).hide();
+                    }
+                }
+            }
+        }
+    }
+
+    $('#form').submit(function() {
+        $('#projectSearch').prop('disabled', true);
+        $('#taskSearch').prop('disabled', true);
+    })
+
 });

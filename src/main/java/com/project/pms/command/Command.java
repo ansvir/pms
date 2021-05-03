@@ -39,11 +39,7 @@ public class Command {
     private ICommand deleteTaskCommand;
 
     public CommandEnum getCommandEnum(String action) {
-        return
-                CommandEnum.
-                        valueOf
-                                (action.
-                                        toUpperCase());
+        return CommandEnum.valueOf(action.toUpperCase());
     }
     public ICommand getCommand(CommandEnum commandEnum) {
         switch (commandEnum) {

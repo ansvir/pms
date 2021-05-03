@@ -1,6 +1,7 @@
 package com.project.pms.dao;
 
 import com.project.pms.connector.DBConnector;
+import com.project.pms.model.Project;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
@@ -34,6 +35,7 @@ public class InitiateDatabaseDAO {
             "    project_id INT REFERENCES project (id),\n" +
             "    task_id    INT REFERENCES task (id)\n" +
             ")";
+private static final String SQL_GET_TABLES_COUNT = "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public'";
 
     private final DBConnector CONNECTOR;
     private Connection connection;
@@ -57,5 +59,26 @@ public class InitiateDatabaseDAO {
             CONNECTOR.closeConnection();
         }
         return rowsAffected;
+    }
+
+    public long databaseContainsTables() {
+        long rows = 0L;
+        try {
+            connection = CONNECTOR.getConnection();
+            statement = connection.createStatement();
+            ResultSet resultSet =
+                    statement.executeQuery(SQL_GET_TABLES_COUNT);
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    rows = Long.parseLong(resultSet.getString(1));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            CONNECTOR.closeStatement(statement);
+            CONNECTOR.closeConnection();
+        }
+        return rows;
     }
 }
