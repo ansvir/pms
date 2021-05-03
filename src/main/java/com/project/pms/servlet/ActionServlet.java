@@ -17,16 +17,12 @@ import java.io.IOException;
 public class ActionServlet extends HttpServlet {
 
     @Inject
-    @EmptyCommandQualifier
-    ICommand iCommand;
-
-    @Inject
     private ActionFactory actionFactory;
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String stringCommand = request.getParameter("command");
-        iCommand = actionFactory.defineCommand(stringCommand);
+        ICommand iCommand = actionFactory.defineCommand(stringCommand);
         String page = iCommand.execute(request, response);
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
         dispatcher.forward(request, response);
