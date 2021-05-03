@@ -1,4 +1,4 @@
-#Simple Project Managament System
+# Simple Project Managament System
 
 Functionality:
 
